@@ -1,6 +1,7 @@
 package com.murilonerdx.pescadordehomens.controller;
 
 import com.murilonerdx.pescadordehomens.dto.PropositoDTO;
+import com.murilonerdx.pescadordehomens.entity.Oracao;
 import com.murilonerdx.pescadordehomens.entity.Passagem;
 import com.murilonerdx.pescadordehomens.entity.Proposito;
 import com.murilonerdx.pescadordehomens.repository.PassagemRepository;
@@ -37,18 +38,22 @@ public class PropositoController {
 
     @PostMapping()
     public Proposito create(@RequestBody PropositoDTO propositoDTO) {
-        List<Passagem> passagens = new ArrayList<>();
-        Proposito proposito = DozerConverter.parseObject(propositoDTO, Proposito.class);
-        for(Integer id : propositoDTO.getPassagemDoPropositoIds()){
-            Passagem passagem = passagemRepository.findById(Long.valueOf(id)).get();
-            passagens.add(passagem);
-        }
-        proposito.setPassagemDoProposito(passagens);
-        return propositoRepository.save(proposito);
+        return getProposito(propositoDTO);
     }
 
     @PutMapping()
-    public Proposito update(@RequestBody Proposito proposito) {
+    public Proposito update(@RequestBody PropositoDTO propositoDTO) {
+        return getProposito(propositoDTO);
+    }
+
+    private Proposito getProposito(@RequestBody PropositoDTO propositoDTO) {
+        List<Passagem> listPassagens = new ArrayList<>();
+        Proposito proposito = DozerConverter.parseObject(propositoDTO, Proposito.class);
+        for(Integer id: propositoDTO.getPassagemDoPropositoIds()){
+            Passagem passagem = passagemRepository.findById(Long.valueOf(id)).get();
+            listPassagens.add(passagem);
+        }
+        proposito.setPassagemDoProposito(listPassagens);
         return propositoRepository.save(proposito);
     }
 

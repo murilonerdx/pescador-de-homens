@@ -58,7 +58,11 @@ public class OracaoController {
     }
 
     @PutMapping()
-    public Oracao update(@RequestBody Oracao oracao) {
+    public Oracao update(@RequestBody OracaoDTO oracaoDTO) {
+        Oracao oracao = DozerConverter.parseObject(oracaoDTO, Oracao.class);
+        Proposito proposito = propositoRepository.findById(oracaoDTO.getPropositoId()).get();
+
+        oracao.setProposito(proposito);
         return oracaoRepository.save(oracao);
     }
 
